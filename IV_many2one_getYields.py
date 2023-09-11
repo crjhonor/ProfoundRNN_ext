@@ -8,7 +8,7 @@ from pathlib import Path
 import xlrd, xlwt
 import pandas as pd
 import numpy as np
-dataDirName = "/run/user/1000/gvfs/smb-share:server=crjlambda-pc,share=profoundrnn_data"
+dataDirName = "/run/user/1000/gvfs/smb-share:server=192.168.43.107,share=profoundrnn_data"
 
 class readingYields:
     def __init__(self, yieldsWanted):

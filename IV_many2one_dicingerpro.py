@@ -12,7 +12,7 @@ import datetime
 
 # Part I:
 # Prepare the features and labels for models.===========================================================================
-dataDirName = "/run/user/1000/gvfs/smb-share:server=crjlambda-pc,share=dataforlater"
+dataDirName = "/run/user/1000/gvfs/smb-share:server=192.168.43.107,share=dataforlater"
 emailReadfilename = Path(dataDirName, "II_seq2seq_moon2sun_cook_email_feature_forlater.json")
 weiboReadfilename = Path(dataDirName, "II_seq2seq_moon2sun_cook_weibo_feature_forlater.json")
 emailFeatures_df = pd.read_json(emailReadfilename)

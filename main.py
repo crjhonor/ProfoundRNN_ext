@@ -6,6 +6,7 @@ predictions. Seasonal models are also developed as they can be useful for target
 precise due to the small size of seasonal dataset.
 """
 
+
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
@@ -61,3 +62,5 @@ IV_many2one_dicingerpro.py: This is the idea that using many to one model, I am 
 generate the odds of either going up or down. I will use the old model I developed in the middle of last year to
 generate the results.
 """
+
+# # TODO: Build the scripts to look closer into the hedge pairs.
