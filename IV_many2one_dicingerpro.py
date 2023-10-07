@@ -12,7 +12,7 @@ import datetime
 
 # Part I:
 # Prepare the features and labels for models.===========================================================================
-dataDirName = "/run/user/1000/gvfs/smb-share:server=192.168.43.107,share=dataforlater"
+dataDirName = "/run/user/1000/gvfs/smb-share:server=crjlambda-pc,share=dataforlater"
 emailReadfilename = Path(dataDirName, "II_seq2seq_moon2sun_cook_email_feature_forlater.json")
 weiboReadfilename = Path(dataDirName, "II_seq2seq_moon2sun_cook_weibo_feature_forlater.json")
 emailFeatures_df = pd.read_json(emailReadfilename)
@@ -40,7 +40,8 @@ To get labels for deep learning.
 indexWanted_CU0 = ['CU0', 'P0', 'Y0', 'AG0', 'BU0', 'ZN0', 'C0', 'AL0', 'RM0', 'M0', 'CF0']
 indexWanted_RB0 = ['RB0', 'HC0', 'I0', 'V0', 'BU0', 'JM0', 'UR0', 'FG0', 'MA0', 'SA0', 'SR0']
 indexWanted_SCM = ["SCM", 'AU0', 'PG0', 'EB0', 'FU0', 'TA0', 'PP0', 'L0', 'V0', 'LUM', 'RU0']
-indexList = list(np.unique(indexWanted_CU0 + indexWanted_RB0 + indexWanted_SCM))
+indexWanted_FINANCE = ['IH00C1', 'IF00C1', 'IC00C1', 'IM00C1', 'TS00C1', 'T00C1', 'TF00C1', 'TL00C1', 'CU0', 'RB0', 'SCM']
+indexList = list(np.unique(indexWanted_CU0 + indexWanted_RB0 + indexWanted_SCM + indexWanted_FINANCE))
 
 """
 =PART II, Deep Learning.================================================================================================
@@ -141,11 +142,13 @@ Widget and frame creation.
 """
 
 class processingWindow(ttk.Frame):
-    def __init__(self, *args, indexWanted_CU0=None, indexWanted_RB0=None, indexWanted_SCM=None, **kwargs):
+    def __init__(self, *args, indexWanted_CU0=None, indexWanted_RB0=None,
+                 indexWanted_SCM=None, indexWanted_FINANCE=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.indexWanted_CU0 = indexWanted_CU0
         self.indexWanted_RB0 = indexWanted_RB0
         self.indexWanted_SCM = indexWanted_SCM
+        self.indexWanted_FINANCE = indexWanted_FINANCE
         self._vars = {
             'count threshold': tk.IntVar(),
             'count type': tk.IntVar(),
@@ -203,21 +206,27 @@ class processingWindow(ttk.Frame):
             command=lambda: self._run_SCM(indexWanted=self.indexWanted_SCM)
         )
         btnSCM.grid(row=2, column=0, sticky=(tk.W + tk.E), pady=5, padx=5)
+        btnFINANCE = ttk.Button(
+            right_frame,
+            text='FINANCE RELATED',
+            command=lambda: self._run_FINANCE(indexWanted=self.indexWanted_FINANCE)
+        )
+        btnFINANCE.grid(row=3, column=0, sticky=(tk.W + tk.E), pady=5, padx=5)
         LabelInput(right_frame, "COUNT THRESHOLD", input_class=ttk.Spinbox,
                    var=self._vars['count threshold'],
                    input_args={'from': 33, 'to': 66, 'increment': 1}
-                   ).grid(row=3, column=0, sticky=(tk.W + tk.E), pady=5, padx=5)
+                   ).grid(row=4, column=0, sticky=(tk.W + tk.E), pady=5, padx=5)
         LabelInput(right_frame, "NEGATIVE", input_class=ttk.Checkbutton,
                    var=self._vars['count type'],
                    input_args={'onvalue': 1, 'offvalue': 0}
-                   ).grid(row=4, column=0, sticky=(tk.W + tk.E), pady=5, padx=5)
+                   ).grid(row=5, column=0, sticky=(tk.W + tk.E), pady=5, padx=5)
         LabelInput(right_frame, "STOP CURRENT COUNT", input_class=ttk.Checkbutton,
                    var=self._vars['stop flag'],
                    input_args={'onvalue': True, 'offvalue': False}
-                   ).grid(row=5, column=0, sticky=(tk.W + tk.E), pady=5, padx=5)
+                   ).grid(row=6, column=0, sticky=(tk.W + tk.E), pady=5, padx=5)
 
         right_b_frame = ttk.LabelFrame(master=right_frame, text='ADDITION INFO.')
-        right_b_frame.grid(row=6, column=0, sticky=(tk.E + tk.W + tk.N))
+        right_b_frame.grid(row=7, column=0, sticky=(tk.E + tk.W + tk.N))
         LabelInput(right_b_frame, "X Predict Date", input_class=ttk.Label,
                    var=self._vars['X predict date']
                    ).grid(row=0, column=0, sticky=(tk.W+tk.E))
@@ -368,7 +377,7 @@ class processingWindow(ttk.Frame):
                     self._vars['output text'].set(outputString)
                     self.master.update()
                     # Saving output string to text
-                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringCU0.txt"])), 'w')
+                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringCU0.txt"])), 'mw')
                     saving_to_file.write(countResults + outputString)
                     saving_to_file.close()
                     maxCount = positiveCount * (1 - countType) + negativeCount * countType
@@ -513,7 +522,7 @@ class processingWindow(ttk.Frame):
                     self._vars['output text'].set(outputString)
                     self.master.update()
                     # Saving output string to text
-                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringRB0.txt"])), 'w')
+                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringRB0.txt"])), 'mw')
                     saving_to_file.write(countResults + outputString)
                     saving_to_file.close()
                     maxCount = positiveCount * (1 - countType) + negativeCount * countType
@@ -658,7 +667,152 @@ class processingWindow(ttk.Frame):
                     self._vars['output text'].set(outputString)
                     self.master.update()
                     # Saving output string to text
-                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringSCM.txt"])), 'w')
+                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringSCM.txt"])), 'mw')
+                    saving_to_file.write(countResults + outputString)
+                    saving_to_file.close()
+                    maxCount = positiveCount * (1 - countType) + negativeCount * countType
+
+            if positiveCount * (1 - countType) + negativeCount * countType >= countThreshold:
+                break
+            elif self._vars['stop flag'].get():
+                self._vars['stop flag'].set(value=False)
+                self.master.update()
+                break
+
+    def _run_FINANCE(self, indexWanted):
+        self.figureUP.clf()
+        figUP = self.figureUP.add_subplot(1, 1, 1)
+
+        self.figureDN.clf()
+        figDN = self.figureDN.add_subplot(1, 1, 1)
+
+        negative_count, positive_count=[], []
+
+        countingResults = []
+
+        countThreshold = self._vars['count threshold'].get()
+        countType = self._vars['count type'].get()
+        maxCount = 0
+        while True:
+            positiveCount = 0
+            negativeCount = 0
+            # Implement simple linear model.
+            sdlResults = []
+            for i in tqdm(range(len(indexWanted)), ncols=100, desc="SIMPLE LINEAR NETWORK", colour="blue"):
+                ind = [indexWanted[i]]
+                glReturn = gl.getLabels(indexWanted=ind)
+                labelsDL_df = glReturn.returnLabels
+                sdlReturn = sdl.simpleDeeplearning(ind, emailFeatures_df, weiboFeatures_df, featuresYieldsDL_df,
+                                                   labelsDL_df)
+                for var in sdlReturn.results.iloc[0].values[2:]:
+                    rndV_negative = np.random.uniform(-.1, 0)
+                    rndV_positive = np.random.uniform(0, .1)
+                    self.master._to_status(' '.join(["Simple Deep Learning prediction of", ind[0], ":", str(sdlReturn.results.iloc[0].values[2:])]))
+                    self._vars['X predict date'].set(value=sdlReturn.X_predict_date)
+                    if var >= 0:
+                        positive_count.append(var)
+                        figUP.scatter(rndV_positive, rndV_positive, s=round(abs(rndV_positive) * 5e4, 0), c='red', alpha=0.1)
+                        figUP.set_xlabel(' '.join(['POSITIVE COUNT:', str(len(positive_count))]))
+                        positiveCount = positiveCount + 1
+                    else:
+                        negative_count.append(var)
+                        figDN.scatter(rndV_negative, rndV_negative, s=round(abs(rndV_negative) * 5e4, 0), c='green', alpha=0.1)
+                        figDN.set_xlabel(' '.join(['NEGATIVE COUNT:', str(len(negative_count))]))
+                        negativeCount = negativeCount + 1
+                    self.canvas_tkagg_UP.draw()
+                    self.canvas_tkagg_DN.draw()
+                    self.master.update()
+                sdlResults.append(sdlReturn.results)
+                self._vars['output text'].set(str(sdlReturn.results))
+                self.master.update()
+
+            # Implement simple complete learning network.
+            sclnResults = []
+            for i in tqdm(range(len(indexWanted)), ncols=100, desc="SIMPLE COMPLETE NETWORK", colour="blue"):
+                ind = [indexWanted[i]]
+                glReturn = gl.getLabels(indexWanted=ind)
+                labelsDL_df = glReturn.returnLabels
+                sclnReturn = scln.simpleCompleteln(ind, emailFeatures_df, weiboFeatures_df, featuresYieldsDL_df, labelsDL_df)
+                for var in sclnReturn.results.iloc[0].values[2:]:
+                    rndV_negative = np.random.uniform(-.1, 0)
+                    rndV_positive = np.random.uniform(0, .1)
+                    self.master._to_status(' '.join(["Simple Complete LN prediction of", ind[0], ":", str(sclnReturn.results.iloc[0].values[2:])]))
+                    self._vars['X predict date'].set(value=sclnReturn.X_predict_date)
+                    if var >= 0:
+                        positive_count.append(var)
+                        figUP.scatter(rndV_positive, rndV_positive, s=round(abs(rndV_positive) * 5e4, 0), c='red', alpha=0.1)
+                        figUP.set_xlabel(' '.join(['POSITIVE COUNT:', str(len(positive_count))]))
+                        positiveCount = positiveCount + 1
+                    else:
+                        negative_count.append(var)
+                        figDN.scatter(rndV_negative, rndV_negative, s=round(abs(rndV_negative) * 5e4, 0), c='green', alpha=0.1)
+                        figDN.set_xlabel(' '.join(['NEGATIVE COUNT:', str(len(negative_count))]))
+                        negativeCount = negativeCount + 1
+                    self.canvas_tkagg_UP.draw()
+                    self.canvas_tkagg_DN.draw()
+                    self.master.update()
+                sclnResults.append(sclnReturn.results)
+                self._vars['output text'].set(str(sclnReturn.results))
+                self.master.update()
+
+            # The 3rd network, simple convolution network.
+            """
+            I need a 4x3 features inorder to use the convolution network. And features array should be transformed into a 4D 
+            data, [batch_size, 1, 3, 4], the '1' is a channel.
+            """
+            scnnResults = []
+            for i in tqdm(range(len(indexWanted)), ncols=100, desc="SIMPLE CONVOLUTION NETWORK", colour="blue"):
+                ind = [indexWanted[i]]
+                glReturn = gl.getLabels(indexWanted=ind)
+                labelsDL_df = glReturn.returnLabels
+                scnnReturn = scnn.simpleConvolutionnetwork(ind, emailFeatures_df, weiboFeatures_df, featuresYieldsDL_df, labelsDL_df)
+                for var in scnnReturn.results.iloc[0].values[2:]:
+                    rndV_negative = np.random.uniform(-.1, 0)
+                    rndV_positive = np.random.uniform(0, .1)
+                    self.master._to_status(' '.join(["Simple Convolution Network prediction of", ind[0], ":", str(scnnReturn.results.iloc[0].values[2:])]))
+                    self._vars['X predict date'].set(value=scnnReturn.X_predict_date)
+                    if var >= 0:
+                        positive_count.append(var)
+                        figUP.scatter(rndV_positive, rndV_positive, s=round(abs(rndV_positive) * 5e4, 0), c='red', alpha=0.1)
+                        figUP.set_xlabel(' '.join(['POSITIVE COUNT:', str(len(positive_count))]))
+                        positiveCount = positiveCount + 1
+                    else:
+                        negative_count.append(var)
+                        figDN.scatter(rndV_negative, rndV_negative, s=round(abs(rndV_negative) * 5e4, 0), c='green', alpha=0.1)
+                        figDN.set_xlabel(' '.join(['NEGATIVE COUNT:', str(len(negative_count))]))
+                        negativeCount = negativeCount + 1
+                scnnResults.append(scnnReturn.results)
+                self._vars['output text'].set(str(scnnReturn.results))
+                self.master.update()
+
+            # Showing the counting results in the text box.
+            countResults = "\nCounting Results generated at time: " + str(datetime.datetime.now()) + '\n' + \
+                           "Overall Group Repeated at : " + str(len(countingResults)+1) + "\n" + \
+                           'COUNT TYPE: ' + ('NEGATIVE' if countType == 1 else 'POSITIVE') + '\n' + \
+                           "Positive Count: " + str(positiveCount) + ";  " + \
+                           "Negative Count: " + str(negativeCount) + "\n" + \
+                           "Total Count: " + str(positiveCount * (1 - countType) + negativeCount * countType) + "\n"
+            countingResults.append(countResults)
+            self._vars['output text'].set(str(countResults))
+            self.master.update()
+
+            if positiveCount * (1 - countType) + negativeCount * countType > maxCount:
+                # In order to use tkinter for pretty output, I need to package all the results into one string.
+                outputString = '\nCOUNT TYPE: ' + ('NEGATIVE' if countType == 1 else 'POSITIVE') + \
+                               '\nTOTAL COUNT: ' + str(positiveCount * (1 - countType) + negativeCount * countType)
+                for i in range(len(indexWanted)):
+                    singleIndexresult = '\n'.join(["\nDeep Learning results of " + indexWanted[i],
+                                                   '*' * 100,
+                                                   str(sdlResults[i]),
+                                                   '.' * 100,
+                                                   str(sclnResults[i]),
+                                                   str(scnnResults[i]),
+                                                   "=" * 100])
+                    outputString = "\n".join([outputString, singleIndexresult])
+                    self._vars['output text'].set(outputString)
+                    self.master.update()
+                    # Saving output string to text
+                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringFINANCE.txt"])), 'w')
                     saving_to_file.write(countResults + outputString)
                     saving_to_file.close()
                     maxCount = positiveCount * (1 - countType) + negativeCount * countType
@@ -671,11 +825,13 @@ class processingWindow(ttk.Frame):
                 break
 
 class Application(tk.Tk):
-    def __init__(self, *args, indexWanted_CU0=None, indexWanted_RB0=None, indexWanted_SCM=None, **kwargs):
+    def __init__(self, *args, indexWanted_CU0=None, indexWanted_RB0=None,
+                 indexWanted_SCM=None, indexWanted_FINANCE=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.indexWanted_CU0 = indexWanted_CU0
         self.indexWanted_RB0 = indexWanted_RB0
         self.indexWanted_SCM = indexWanted_SCM
+        self.indexWanted_FINANCE = indexWanted_FINANCE
         self.title('IV_many2one_dicingerpro')
         self.columnconfigure(0, weight=1)
         ttk.Label(
@@ -687,7 +843,8 @@ class Application(tk.Tk):
         self.processingWindow = processingWindow(self,
                                                  indexWanted_CU0=indexWanted_CU0,
                                                  indexWanted_RB0=indexWanted_RB0,
-                                                 indexWanted_SCM=indexWanted_SCM)
+                                                 indexWanted_SCM=indexWanted_SCM,
+                                                 indexWanted_FINANCE=indexWanted_FINANCE)
         self.processingWindow.grid(row=1, padx=10, sticky=(tk.W+tk.E))
 
         self.status = tk.StringVar()
@@ -700,6 +857,7 @@ class Application(tk.Tk):
 
 App = Application(indexWanted_CU0=indexWanted_CU0,
                   indexWanted_RB0=indexWanted_RB0,
-                  indexWanted_SCM=indexWanted_SCM)
+                  indexWanted_SCM=indexWanted_SCM,
+                  indexWanted_FINANCE=indexWanted_FINANCE)
 App.mainloop()
 print('\nPRETTY DONE AS WELL!', '='*200)
