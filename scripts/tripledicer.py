@@ -9,6 +9,7 @@ matplotlib.use('TkAgg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import models.tripledicermodel as tdm
+import time
 
 class TripleDicer(tk.Frame):
     """Set the hyperparameters page"""
@@ -136,5 +137,17 @@ class TripleDicer(tk.Frame):
 
     def _run(self):
         """Runing the Triple Dicinger Model
-        Try to have as fewer codes here as possible."""
-        print("Run the model.")
+        Try to have as fewer codes here as possible. Only do the outputs part here."""
+        # Clean the figure and textual output.
+        self.figure.clf()
+        self._vars['triple dicer textual results'].set('')
+
+        # Do the dice.
+        model = tdm.Triple_Dicer(vars=self._vars)
+        num = 0
+        while True:
+            # Getting results from the model training and prediction
+            results = model.training_prediction()
+            # Visualizing the results
+            self._vars['triple dicer textual results'].set(f"Can you see the {results}?")
+            self.master.update()

@@ -1,10 +1,12 @@
 """
-Get datasets and process both the features and labels for deep learning.
+Here I position all the global variables of the project.
 """
 import numpy as np
 import pandas as pd
+from collections import namedtuple
 
-indexWantedList = pd.read_csv('./indexWantedList.csv', index_col=0)
+# Variables for the dataset generation----------------------------------------------------------------------------------
+indexWantedList = pd.read_csv('/home/Beta4090/PycharmProjects/ProfoundRNN_ext/indexWantedList.csv', index_col=0)
 indexWantedList = indexWantedList.stack()
 indexWantedList = indexWantedList.unstack(0)
 
@@ -16,6 +18,28 @@ indexWanted_default = indexWanted_FINANCE
 indexList = list(np.unique(indexWanted_CU0 + indexWanted_RB0 + indexWanted_SCM + indexWanted_FINANCE))
 indexList.sort()
 
+# Variable for the triple dicer model.
+TDM_SEQUENCE_LEN = 26  # stand for 25 trading days which are very close to one month
+TDM_SEQUENCE_PAD = 999 # the int used for <pad>
+TDM_MAX_ENCODER_LENGTH = 8
+TDM_MAX_PREDICTION_LENGTH = 1
+TDM_BATCH_SIZE = 4
+
+FeatureConfig = namedtuple(
+    "FeatureConfig",
+    [
+        "target",
+        "index_cols",
+        "static_categoricals",
+        "static_reals",
+        "time_varying_known_categoricals",
+        "time_varying_known_reals",
+        "time_varying_unkown_reals",
+        "group_ids"
+    ],
+)
+
+# Variables for the GUI-------------------------------------------------------------------------------------------------
 elevenValues_dict = {
     f"eleven_v{i}": {'type': 'str', 'value': indexWanted_default[i]} for i in range(11)
 }

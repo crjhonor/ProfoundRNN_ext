@@ -377,7 +377,7 @@ class processingWindow(ttk.Frame):
                     self._vars['output text'].set(outputString)
                     self.master.update()
                     # Saving output string to text
-                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringCU0.txt"])), 'mw')
+                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringCU0.txt"])), 'w')
                     saving_to_file.write(countResults + outputString)
                     saving_to_file.close()
                     maxCount = positiveCount * (1 - countType) + negativeCount * countType
@@ -522,7 +522,7 @@ class processingWindow(ttk.Frame):
                     self._vars['output text'].set(outputString)
                     self.master.update()
                     # Saving output string to text
-                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringRB0.txt"])), 'mw')
+                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringRB0.txt"])), 'w')
                     saving_to_file.write(countResults + outputString)
                     saving_to_file.close()
                     maxCount = positiveCount * (1 - countType) + negativeCount * countType
@@ -667,7 +667,7 @@ class processingWindow(ttk.Frame):
                     self._vars['output text'].set(outputString)
                     self.master.update()
                     # Saving output string to text
-                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringSCM.txt"])), 'mw')
+                    saving_to_file = open(Path(dataDirName, '-'.join([str(datetime.datetime.now().date()), "IV_many2one_outputStringSCM.txt"])), 'w')
                     saving_to_file.write(countResults + outputString)
                     saving_to_file.close()
                     maxCount = positiveCount * (1 - countType) + negativeCount * countType

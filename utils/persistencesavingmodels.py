@@ -16,7 +16,7 @@ class HyperparameterSaving:
     filename = 'DPM_hyperparameters.json'
     self.filepath = Path('.') / filename
 
-    # load in saved hyper parameters
+    # load in saved hyperparameters
     self.load()
 
   def load(self):

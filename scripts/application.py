@@ -5,9 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from utils.mainmenu import MainMenu
-import numpy as np
-import pandas as pd
-import utils.tripledicer as tripledicer
+import scripts.tripledicer as tripledicer
 import utils.readit as readit
 import utils.persistencesavingmodels as psm
 
